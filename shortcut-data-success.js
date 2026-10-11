@@ -13,4 +13,13 @@ const useUntil = Date.parse(d.useUntil);
 const updatedAt = Date.parse(d.updatedAt);
 if (!Number.isFinite(useUntil) || !Number.isFinite(updatedAt) || useUntil <= now || updatedAt > now + 60000 || useUntil <= updatedAt) { stopPayment("付款订单已失效"); }
 setVariable("mcd_commit", "");
-openUrl("https://m.mcd.cn/mcp/jumpToApp?orderId=" + encodeURIComponent(d.orderId));
+const parameters = encodeURIComponent(JSON.stringify({ orderId: d.orderId, openCashierDesk: "1" }));
+const appUrl = "mcdapp://page?iosPageName=MCDOrderDetailViewController"
+  + "&androidPageName=ComponentOrder&androidPageAction=order_detail"
+  + "&harmonyPageName=OrderDetailPage&parameters=" + parameters;
+try {
+  openUrl(appUrl);
+} catch (error) {
+  showToast("无法打开麦当劳 App，请确认已安装");
+  abort();
+}

@@ -1,6 +1,6 @@
 # 麦当劳付款桌面按钮
 
-个人 Android 桌面入口。HTTP Shortcuts 每次点击读取 GitHub 上最新订单，再打开麦当劳官方 jumpToApp 链接。外出可用，不需要电脑常开、同一 Wi-Fi、服务器或 Tailscale。不启用 GitHub Pages，不创建订单、不代为付款。
+个人 Android 桌面入口。HTTP Shortcuts 每次点击读取 GitHub 上最新订单，再用麦当劳官方页面内使用的 mcdapp:// 深链直接打开 App（不经过浏览器）。外出可用，不需要电脑常开、同一 Wi-Fi、服务器或 Tailscale。不启用 GitHub Pages，不创建订单、不代为付款。
 
 ## 手机首次设置
 
@@ -8,7 +8,7 @@
 2. 应用“导入 / 导出”选择从 URL 导入：https://raw.githubusercontent.com/LDT-dream/mcd-payment-entry/main/mcd-payment-shortcut.zip
 3. 使用合并导入，保留已有快捷方式。导入后出现“麦当劳付款”。
 4. 长按该快捷方式添加到桌面；也可在桌面添加小部件菜单选择 HTTP Shortcuts，绑定“麦当劳付款”。菜单位置随系统版本而异。
-5. 空订单提示“当前没有待付款订单”。新订单就绪后点击按钮，手机浏览器打开官方页面并尝试唤起麦当劳 App；系统可能要求确认打开应用。
+5. 空订单提示“当前没有待付款订单”。新订单就绪后点击按钮，直接请求打开麦当劳 App 的订单收银台，不先打开浏览器；系统仍可能要求确认打开应用。
 
 [尝试打开导入入口](https://http-shortcuts.rmy.ch/import?url=https%3A%2F%2Fraw.githubusercontent.com%2FLDT-dream%2Fmcd-payment-entry%2Fmain%2Fmcd-payment-shortcut.zip)。未唤起时使用应用内 URL 导入。
 
@@ -34,4 +34,7 @@
 GitHub 网络可达性仍可能影响手机读取。导入格式与脚本按官方源码、文档核对，并在电脑验证；小米真机导入、桌面显示与 App 唤起仍待实测。
 
 参考：[脚本文档](https://http-shortcuts.rmy.ch/scripting)、[导入文档](https://http-shortcuts.rmy.ch/import-export)、[官方样例](https://github.com/Waboodoo/HTTP-Shortcuts/blob/develop/HTTPShortcuts/app/src/test/resources/shortcuts-v90.json)。
+
+
+深链参数来自麦当劳官方 jumpToApp 页面实际脚本：androidPageName=ComponentOrder、androidPageAction=order_detail，parameters 包含 orderId 与 openCashierDesk=1。这里只对普通点餐订单适用，不覆盖商城 ECS 订单。真实订单是否可付款由麦当劳决定。
 

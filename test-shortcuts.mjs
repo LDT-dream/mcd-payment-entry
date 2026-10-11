@@ -12,8 +12,8 @@ assert.equal(data.codeOnSuccess, (await readFile(new URL('./shortcut-data-succes
 assert.equal(visible.codeOnFailure, (await readFile(new URL('./shortcut-failure.js', import.meta.url), 'utf8')).trimEnd());
 assert.equal(data.codeOnFailure, visible.codeOnFailure);
 
-function run(code, state, body = '') {
-  const result = { aborted: false, toasts: [], enqueued: [], opened: [] };
+function run(code, state, body = '', options = {}) {
+  const result = { aborted: false, toasts: [], enqueued: [], enqueuedVariables: [], opened: [] };
   const context = {
     response: { body },
     JSON,
@@ -26,8 +26,14 @@ function run(code, state, body = '') {
     getVariable: (key) => state[key],
     setVariable: (key, value) => { state[key] = value; },
     showToast: (message) => result.toasts.push(message),
-    enqueueShortcut: (id) => result.enqueued.push(id),
-    openUrl: (url) => result.opened.push(url),
+    enqueueShortcut: (id, variables) => {
+      result.enqueued.push(id);
+      result.enqueuedVariables.push(variables);
+    },
+    openUrl: (url) => {
+      result.opened.push(url);
+      if (options.openFails) throw new Error('No matching app');
+    },
     abort: () => { throw abortSignal; },
   };
   try {
@@ -58,11 +64,30 @@ const validOrder = JSON.stringify({
   assert.match(state.mcd_nonce, /^\d+-\d+$/);
   const feed = run(visible.codeOnSuccess, state, atom(commit));
   assert.deepEqual(feed.enqueued, [data.id]);
+  assert.equal(feed.enqueuedVariables[0].mcd_commit, commit);
   assert.equal(state.mcd_commit, commit);
   assert.equal(run(data.codeOnPrepare, state).aborted, false);
   const payment = run(data.codeOnSuccess, state, validOrder);
-  assert.deepEqual(payment.opened, ['https://m.mcd.cn/mcp/jumpToApp?orderId=1030900790000661788656499983']);
+  assert.equal(payment.opened.length, 1);
+  const opened = new URL(payment.opened[0]);
+  assert.equal(opened.protocol, 'mcdapp:');
+  assert.equal(opened.hostname, 'page');
+  assert.equal(opened.searchParams.get('androidPageName'), 'ComponentOrder');
+  assert.equal(opened.searchParams.get('androidPageAction'), 'order_detail');
+  assert.deepEqual(JSON.parse(opened.searchParams.get('parameters')), {
+    orderId: '1030900790000661788656499983', openCashierDesk: '1',
+  });
   assert.equal(state.mcd_commit, '');
+}
+
+// App launch failure is reported without silently opening a browser.
+{
+  const state = { mcd_commit: commit };
+  const result = run(data.codeOnSuccess, state, validOrder, { openFails: true });
+  assert.equal(result.aborted, true);
+  assert.equal(result.opened.length, 1);
+  assert.match(result.opened[0], /^mcdapp:\/\//);
+  assert.deepEqual(result.toasts, ['无法打开麦当劳 App，请确认已安装']);
 }
 
 // A malformed Atom feed, no entry, and a hash injection are all rejected without enqueueing a data request.

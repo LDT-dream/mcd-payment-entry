@@ -29,6 +29,7 @@
 
 用户已授权公开订单链接。只保存订单号、更新时间和入口使用期，不保存账号、地址、金额、凭据或明细。Git 历史仍保留旧订单号。
 
-GitHub 网络可达性和匿名 API 限流可能影响手机读取；失败不会使用旧订单。导入格式与脚本按官方源码、文档核对，并在电脑验证；小米真机导入、桌面显示与 App 唤起仍待实测。
+GitHub 原始文件的网络可达性可能影响手机读取；组件每次请求附加随机缓存参数；失败不会使用旧订单。导入格式与脚本按官方源码、文档核对，并在电脑验证；小米真机导入、桌面显示与 App 唤起仍待实测。
 
 参考：[脚本文档](https://http-shortcuts.rmy.ch/scripting)、[导入文档](https://http-shortcuts.rmy.ch/import-export)、[官方样例](https://github.com/Waboodoo/HTTP-Shortcuts/blob/develop/HTTPShortcuts/app/src/test/resources/shortcuts-v90.json)。
+

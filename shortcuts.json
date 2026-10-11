@@ -11,12 +11,8 @@
           "id": "f3b4d91a-7b7a-4f3e-8d8c-2b9f0e6a4c12",
           "name": "麦当劳付款",
           "method": "GET",
-          "url": "https://api.github.com/repos/LDT-dream/mcd-payment-entry/contents/latest.json?ref=main",
+          "url": "https://raw.githubusercontent.com/LDT-dream/mcd-payment-entry/main/latest.json?t={{4d601ba2-98e0-4cae-84bd-cf26fb139d83}}",
           "headers": [
-            {
-              "key": "Accept",
-              "value": "application/vnd.github.raw+json"
-            },
             {
               "key": "Cache-Control",
               "value": "no-cache"
@@ -28,10 +24,19 @@
           "responseHandling": {
             "successOutput": "none",
             "failureOutput": "simple"
-          }
+          },
+          "codeOnPrepare": "setVariable(\"mcd_nonce\", String(Date.now()) + \"-\" + String(Math.random()).slice(2));"
         }
       ]
     }
   ],
-  "variables": []
+  "variables": [
+    {
+      "id": "4d601ba2-98e0-4cae-84bd-cf26fb139d83",
+      "key": "mcd_nonce",
+      "type": "constant",
+      "value": "0",
+      "urlEncode": true
+    }
+  ]
 }

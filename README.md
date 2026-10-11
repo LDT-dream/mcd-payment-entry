@@ -29,7 +29,9 @@
 
 用户已授权公开订单链接。只保存订单号、更新时间和入口使用期，不保存账号、地址、金额、凭据或明细。Git 历史仍保留旧订单号。
 
-GitHub 原始文件的网络可达性可能影响手机读取；组件每次请求附加随机缓存参数；失败不会使用旧订单。导入格式与脚本按官方源码、文档核对，并在电脑验证；小米真机导入、桌面显示与 App 唤起仍待实测。
+导入仍来自同一仓库。为避开 GitHub 原始文件对 `main/latest.json` 可能长达数分钟的缓存，桌面入口分两步：先读取该仓库的 Git 提交 Atom 源（随机参数只用于此请求），严格取得最新提交的 40 位哈希；再以该不可变提交哈希读取 `latest.json`。两步任一失败、提交哈希不合规或订单已失效都会清空本次提交并停止，不会使用旧订单。
+
+GitHub 网络可达性仍可能影响手机读取。导入格式与脚本按官方源码、文档核对，并在电脑验证；小米真机导入、桌面显示与 App 唤起仍待实测。
 
 参考：[脚本文档](https://http-shortcuts.rmy.ch/scripting)、[导入文档](https://http-shortcuts.rmy.ch/import-export)、[官方样例](https://github.com/Waboodoo/HTTP-Shortcuts/blob/develop/HTTPShortcuts/app/src/test/resources/shortcuts-v90.json)。
 

@@ -1,9 +1,9 @@
-let d;
-try { d = JSON.parse(response.body); } catch (e) { showToast("付款数据无效"); abort(); }
-if (!d || !d.orderId) { showToast("当前没有待付款订单"); abort(); }
-if (typeof d.orderId !== "string" || !/^\d{1,64}$/.test(d.orderId)) { showToast("付款订单号无效"); abort(); }
-const now = Date.now();
-const useUntil = Date.parse(d.useUntil);
-const updatedAt = Date.parse(d.updatedAt);
-if (!Number.isFinite(useUntil) || !Number.isFinite(updatedAt) || useUntil <= now || updatedAt > now + 60000 || useUntil <= updatedAt) { showToast("付款订单已失效"); abort(); }
-openUrl("https://m.mcd.cn/mcp/jumpToApp?orderId=" + encodeURIComponent(d.orderId));
+const firstEntry = /<entry\b[^>]*>([\s\S]*?)<\/entry>/i.exec(response.body);
+const commitMatch = firstEntry && /<id>\s*tag:github\.com,2008:Grit::Commit\/([0-9a-fA-F]{40})\s*<\/id>/i.exec(firstEntry[1]);
+if (!commitMatch) {
+  setVariable("mcd_commit", "");
+  showToast("订单更新信息无效");
+  abort();
+}
+setVariable("mcd_commit", commitMatch[1].toLowerCase());
+enqueueShortcut("b3e9d7c8-5a13-4a9e-95db-9f4f0e0ba6c1", { mcd_commit: commitMatch[1].toLowerCase() });

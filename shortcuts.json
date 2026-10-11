@@ -1,0 +1,37 @@
+{
+  "version": 90,
+  "compatibilityVersion": 90,
+  "categories": [
+    {
+      "id": "7f2b6f24-9fd1-4e49-a6c8-1c4c1dd3d2b1",
+      "name": "麦当劳",
+      "layoutType": "medium_grid",
+      "shortcuts": [
+        {
+          "id": "f3b4d91a-7b7a-4f3e-8d8c-2b9f0e6a4c12",
+          "name": "麦当劳付款",
+          "method": "GET",
+          "url": "https://api.github.com/repos/LDT-dream/mcd-payment-entry/contents/latest.json?ref=main",
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/vnd.github.raw+json"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            }
+          ],
+          "iconName": "flat_color_star",
+          "codeOnSuccess": "let d;\ntry { d = JSON.parse(response.body); } catch (e) { showToast(\"付款数据无效\"); abort(); }\nif (!d || !d.orderId) { showToast(\"当前没有待付款订单\"); abort(); }\nif (typeof d.orderId !== \"string\" || !/^\\d{1,64}$/.test(d.orderId)) { showToast(\"付款订单号无效\"); abort(); }\nconst now = Date.now();\nconst useUntil = Date.parse(d.useUntil);\nconst updatedAt = Date.parse(d.updatedAt);\nif (!Number.isFinite(useUntil) || !Number.isFinite(updatedAt) || useUntil <= now || updatedAt > now + 60000 || useUntil <= updatedAt) { showToast(\"付款订单已失效\"); abort(); }\nopenUrl(\"https://m.mcd.cn/mcp/jumpToApp?orderId=\" + encodeURIComponent(d.orderId));",
+          "codeOnFailure": "showToast(\"获取付款订单失败\");",
+          "responseHandling": {
+            "successOutput": "none",
+            "failureOutput": "simple"
+          }
+        }
+      ]
+    }
+  ],
+  "variables": []
+}
